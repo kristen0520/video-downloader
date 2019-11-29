@@ -4,9 +4,13 @@ const PORT = 5000;
 const fs = require('fs')
 const youtubedl = require('youtube-dl')
 
-/*app.get('/', function (req, res) {
-   res.send('Youtube to mp4 downloader')
-})*/
+app.get('/home', function (req, res) {
+   fs.readFile("index.html", function(err, data){
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write(data);
+  res.end();
+});
+})
 
 app.get(/^\/(.+)/, function(req, res){
   let videoUrlQuery = req.query.v;
