@@ -5,11 +5,19 @@ const fs = require('fs')
 const youtubedl = require('youtube-dl')
 
 app.get('/home', function (req, res) {
-   fs.readFile("index.html", function(err, data){
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write(data);
-  res.end();
-});
+  fs.readFile("index.html", function(err, data){
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
+})
+
+app.get('/downloadComplete', function (req, res) {
+  fs.readFile("downloadComplete.html", function(err, data){
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 app.get(/^\/(.+)/, function(req, res){
@@ -22,12 +30,18 @@ app.get(/^\/(.+)/, function(req, res){
     // Additional options can be given for calling `child_process.execFile()`.
     { cwd: __dirname })
     // Will be called when the download starts.
+    let filename = videoUrlQuery+".mp4";
     video.on('info', function(info) {
       console.log('Download started')
       console.log('filename: ' + info._filename)
       console.log('size: ' + info.size)
-    })
-    video.pipe(fs.createWriteStream('myvideo.mp4'))
+      filenameL = info._filename.length - 16;
+      filename = info._filename.substring(0, filenameL) + ".mp4";
+
+    video.pipe(fs.createWriteStream(filename))
+    res.redirect("/downloadComplete");
+      })
+
 })
 
 var server = app.listen(5000, function () {
